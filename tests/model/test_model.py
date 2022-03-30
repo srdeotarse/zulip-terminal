@@ -827,7 +827,7 @@ class TestModel:
         ],
     )
     @pytest.mark.parametrize(
-        "req, old_topic, footer_updated",
+        "req, old_topic, new_topic, stream_name, stream_id, propagate_mode, stream_messages, footer_updated",
         [
             (
                 {
@@ -837,6 +837,54 @@ class TestModel:
                     "topic": "Some topic",
                 },
                 "Some topic",
+                "Some topic",
+                "stream",
+                1,
+                "change_one",
+                {
+                    1: {
+                        "id": 1,
+                        "content": "<p>hi!</p>",
+                        "subject": "Some topic",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    2: {
+                        "id": 2,
+                        "content": "<p>2</p>",
+                        "subject": "two",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    3: {
+                        "id": 3,
+                        "content": "<p>3</p>",
+                        "subject": "three",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    4: {
+                        "id": 4,
+                        "content": "<p>4</p>",
+                        "subject": "Some topic",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    5: {
+                        "id": 5,
+                        "content": "<p>5</p>",
+                        "subject": "Some topic",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    6: {
+                        "id": 6,
+                        "content": "<p>6</p>",
+                        "subject": "Some topic",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                },
                 False,
             ),
             (
@@ -846,11 +894,111 @@ class TestModel:
                     "topic": "Topic change",
                 },
                 "Old topic",
+                "Topic change",
+                "stream",
+                1,
+                "change_one",
+                {
+                    1: {
+                        "id": 1,
+                        "content": "<p>hi!</p>",
+                        "subject": "Old topic",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    2: {
+                        "id": 2,
+                        "content": "<p>2</p>",
+                        "subject": "two",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    3: {
+                        "id": 3,
+                        "content": "<p>3</p>",
+                        "subject": "three",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    4: {
+                        "id": 4,
+                        "content": "<p>4</p>",
+                        "subject": "Old topic",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    5: {
+                        "id": 5,
+                        "content": "<p>5</p>",
+                        "subject": "Old topic",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    6: {
+                        "id": 6,
+                        "content": "<p>6</p>",
+                        "subject": "Old topic",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                },
                 True,
             ),
             (
-                {"message_id": 1, "propagate_mode": "change_all", "topic": "Old topic"},
+                {
+                    "message_id": 1,
+                    "propagate_mode": "change_all",
+                    "topic": "Old topic",
+                },
                 "Old topic",
+                "Old topic",
+                "stream",
+                1,
+                "change_one",
+                {
+                    1: {
+                        "id": 1,
+                        "content": "<p>hi!</p>",
+                        "subject": "Old topic",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    2: {
+                        "id": 2,
+                        "content": "<p>2</p>",
+                        "subject": "two",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    3: {
+                        "id": 3,
+                        "content": "<p>3</p>",
+                        "subject": "three",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    4: {
+                        "id": 4,
+                        "content": "<p>4</p>",
+                        "subject": "Old topic",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    5: {
+                        "id": 5,
+                        "content": "<p>5</p>",
+                        "subject": "Old topic",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    6: {
+                        "id": 6,
+                        "content": "<p>6</p>",
+                        "subject": "Old topic",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                },
                 False,
             ),
             (
@@ -861,6 +1009,54 @@ class TestModel:
                     "topic": "terminal",
                 },
                 "terminal",
+                "terminal",
+                "stream",
+                1,
+                "change_later",
+                {
+                    1: {
+                        "id": 1,
+                        "content": "<p>:smile:</p>",
+                        "subject": "terminal",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    2: {
+                        "id": 2,
+                        "content": "<p>2</p>",
+                        "subject": "two",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    3: {
+                        "id": 3,
+                        "content": "<p>3</p>",
+                        "subject": "three",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    4: {
+                        "id": 4,
+                        "content": "<p>4</p>",
+                        "subject": "terminal",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    5: {
+                        "id": 5,
+                        "content": "<p>5</p>",
+                        "subject": "terminal",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    6: {
+                        "id": 6,
+                        "content": "<p>6</p>",
+                        "subject": "terminal",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                },
                 False,
             ),
             (
@@ -871,6 +1067,54 @@ class TestModel:
                     "topic": "grett",
                 },
                 "greet",
+                "grett",
+                "stream",
+                1,
+                "change_one",
+                {
+                    1: {
+                        "id": 1,
+                        "content": "<p>Hey!</p>",
+                        "subject": "greet",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    2: {
+                        "id": 2,
+                        "content": "<p>2</p>",
+                        "subject": "two",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    3: {
+                        "id": 3,
+                        "content": "<p>3</p>",
+                        "subject": "three",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    4: {
+                        "id": 4,
+                        "content": "<p>4</p>",
+                        "subject": "greet",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    5: {
+                        "id": 5,
+                        "content": "<p>5</p>",
+                        "subject": "greet",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    6: {
+                        "id": 6,
+                        "content": "<p>6</p>",
+                        "subject": "greet",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                },
                 True,
             ),
             (
@@ -881,24 +1125,109 @@ class TestModel:
                     "topic": "party",
                 },
                 "lets_party",
+                "party",
+                "stream",
+                1,
+                "change_all",
+                {
+                    1: {
+                        "id": 1,
+                        "content": "<p>Lets party!</p>",
+                        "subject": "lets_party",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    2: {
+                        "id": 2,
+                        "content": "<p>2</p>",
+                        "subject": "two",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    3: {
+                        "id": 3,
+                        "content": "<p>3</p>",
+                        "subject": "three",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    4: {
+                        "id": 4,
+                        "content": "<p>4</p>",
+                        "subject": "lets_party",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    5: {
+                        "id": 5,
+                        "content": "<p>5</p>",
+                        "subject": "lets_party",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                    6: {
+                        "id": 6,
+                        "content": "<p>6</p>",
+                        "subject": "lets_party",
+                        "display_recipient": "stream",
+                        "stream_id": 1,
+                    },
+                },
                 True,
             ),
         ],
     )
     def test_update_stream_message(
-        self, mocker, model, response, return_value, req, old_topic, footer_updated
+        self,
+        mocker,
+        model,
+        response,
+        return_value,
+        req,
+        old_topic,
+        new_topic,
+        stream_name,
+        stream_id,
+        propagate_mode,
+        stream_messages,
+        footer_updated,
     ):
         self.client.update_message = mocker.Mock(return_value=response)
         model.index["messages"][req["message_id"]]["subject"] = old_topic
+        req["topic"] = new_topic
+        model.index["messages"][req["message_id"]]["display_recipient"] = stream_name
+        model.index["messages"][req["message_id"]]["stream_id"] = stream_id
+        req["propagate_mode"] = propagate_mode
+        model.index["stream_msg_ids_by_stream_id"][stream_id] = stream_messages
+        topic_msgs = []
+        for msg_id in stream_messages:
+            if model.index["messages"][msg_id].get("subject", None) == old_topic:
+                topic_msgs.append(msg_id)
+        no_of_recent_edited_messages = 0
+        if propagate_mode == "change_later":
+            for msg_id in topic_msgs:
+                if req["message_id"] <= msg_id:
+                    no_of_recent_edited_messages += 1
+        elif propagate_mode == "change_all":
+            no_of_recent_edited_messages = len(topic_msgs)
+        else:
+            no_of_recent_edited_messages = 1
 
         result = model.update_stream_message(**req)
-
         self.client.update_message.assert_called_once_with(req)
         assert result == return_value
         self.display_error_if_present.assert_called_once_with(response, self.controller)
         report_success = model.controller.report_success
         if result and footer_updated:
-            report_success.assert_called_once_with("You changed a message's topic.")
+            if no_of_recent_edited_messages <= 1:
+                report_success.assert_called_once_with(
+                    f"You changed {no_of_recent_edited_messages} message's topic from #{stream_name} > {old_topic} to #{stream_name} > {new_topic}."
+                )
+            else:
+                report_success.assert_called_once_with(
+                    f"You changed {no_of_recent_edited_messages} messages' topic from #{stream_name} > {old_topic} to #{stream_name} > {new_topic}."
+                )
+
         else:
             report_success.assert_not_called()
 

@@ -565,10 +565,40 @@ class Model:
         response = self.client.update_message(request)
         display_error_if_present(response, self.controller)
         if response["result"] == "success":
-            old_topic = self.index["messages"][message_id].get("subject", None)
+            get_message = self.index["messages"]
+            old_topic = get_message[message_id].get("subject", None)
             new_topic = request["topic"]
+            stream_name = get_message[message_id].get("display_recipient", None)
+            stream_id = get_message[message_id].get("stream_id", None)
+            stream_msgs = list(self.index["stream_msg_ids_by_stream_id"][stream_id])
+
+            topic_msgs = []
+            for msg_id in stream_msgs:
+                if get_message[msg_id].get("subject", None) == old_topic:
+                    topic_msgs.append(msg_id)
+            recent_edited_messages = 0
+
+            if propagate_mode == "change_later":
+                for msg_id in topic_msgs:
+                    if message_id <= msg_id:
+                        recent_edited_messages += 1
+            elif propagate_mode == "change_all":
+                recent_edited_messages = len(topic_msgs)
+            else:
+                recent_edited_messages = 1  # propagate_mode == "change_one"
+
+            for msg in topic_msgs:
+                print(get_message[msg])
+
             if old_topic != new_topic:
-                self.controller.report_success("You changed a message's topic.")
+                if recent_edited_messages <= 1:
+                    self.controller.report_success(
+                        f"You changed {recent_edited_messages} message's topic from #{stream_name} > {old_topic} to #{stream_name} > {new_topic}."
+                    )
+                else:
+                    self.controller.report_success(
+                        f"You changed {recent_edited_messages} messages' topic from #{stream_name} > {old_topic} to #{stream_name} > {new_topic}."
+                    )
 
         return response["result"] == "success"
 
