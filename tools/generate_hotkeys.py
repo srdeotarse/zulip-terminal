@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import argparse
+import re
 from collections import defaultdict
 from pathlib import Path, PurePath
 from typing import Dict, List, Tuple
@@ -9,9 +11,62 @@ from zulipterminal.config.keys import HELP_CATEGORIES, KEY_BINDINGS
 OUTPUT_FILE = Path(__file__).resolve().parent.parent / "docs" / "hotkeys.md"
 SCRIPT_NAME = PurePath(__file__).name
 
+# Exclude keys from duplicate keys checking
+KEYS_TO_EXCLUDE = ["q", "e", "m", "r"]
 
-def main() -> None:
-    generate_hotkeys_file()
+
+def main(check_only: bool = False) -> None:
+    if check_only:
+        lint_hotkeys_file()
+    else:
+        generate_hotkeys_file()
+
+
+def lint_hotkeys_file() -> None:
+    """
+    First compare existing hotkeys file, if in sync then lint for key description and key duplication.
+    """
+    hotkeys_file_string = get_hotkeys_file_string()
+    if compare_hotkeys_file(hotkeys_file_string):
+        # To lint keys description and duplicate keys
+        error_flag = 0
+        help_text_style = re.compile(r"^[a-zA-Z\s/()',&@#:_-]*$")
+        categories = read_help_categories()
+        for action in HELP_CATEGORIES.keys():
+            check_duplicate_keys_list: List[str] = []
+            for help_text, key_combinations_list in categories[action]:
+                check_duplicate_keys_list.extend(key_combinations_list)
+                various_key_combinations = various_key_combination(
+                    key_combinations_list
+                )
+                # Check description style
+                if not re.match(help_text_style, help_text):
+                    print(
+                        f"Description - ({help_text}) for key combination - [{various_key_combinations}] should contain only alphabets, spaces and special characters except ."
+                    )
+                    error_flag = 1
+            # Check key combination duplication
+            check_duplicate_keys_list = [
+                key for key in check_duplicate_keys_list if key not in KEYS_TO_EXCLUDE
+            ]
+            duplicate_keys = [
+                key
+                for key in check_duplicate_keys_list
+                if check_duplicate_keys_list.count(key) > 1
+            ]
+            if len(duplicate_keys) != 0:
+                print(
+                    f"Duplicate key combination for keys {duplicate_keys} for category ({HELP_CATEGORIES[action]}) detected"
+                )
+                error_flag = 1
+        if error_flag == 1:
+            print(
+                "After resolving above errors, Run './tools/generate_hotkeys' to update hotkeys."
+            )
+            print("Again run './tools/generate_hotkeys --check-only' to lint hotkeys.")
+        exit(error_flag)
+    else:
+        print("Run './tools/generate_hotkeys' to update the hot keys")
 
 
 def generate_hotkeys_file() -> None:
@@ -77,4 +132,11 @@ def compare_hotkeys_file(hotkeys_file_string: str) -> bool:
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Lint and generate hotkeys")
+    parser.add_argument(
+        "--check-only",
+        action="store_true",
+        help="Lint hotkeys file for key description and key duplication from keys file",
+    )
+    args = parser.parse_args()
+    main(args.check_only)
