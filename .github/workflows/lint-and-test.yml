@@ -97,3 +97,23 @@ jobs:
         uses: codecov/codecov-action@v2
         # We avoid extra work by just running codecov on one python version
         if: matrix.env.CODECOV
+  hotkeys:
+    runs-on: ubuntu-latest
+    name: Hotkeys lint (hotkeys match with keys.py)
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Output Python version
+        run: python --version
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+      - name: Ensure libxml-related libraries are installed (some pypy versions don't have wheels)
+        if: startsWith(matrix.env.PYTHON, 'pypy-')
+        run: sudo apt install libxml2-dev libxslt1-dev
+      - name: Ensure regular package installs from checkout
+        run: pip install .
+      - name: Run generate_hotkeys
+        run: ./tools/generate_hotkeys.py --check-only
+        
