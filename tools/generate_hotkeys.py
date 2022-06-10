@@ -10,14 +10,8 @@ OUTPUT_FILE = Path(__file__).resolve().parent.parent / "docs" / "hotkeys.md"
 SCRIPT_NAME = PurePath(__file__).name
 
 
-def read_help_categories() -> Dict[str, List[Tuple[str, List[str]]]]:
-    """
-    Get all help categories from keys.py
-    """
-    categories = defaultdict(list)
-    for item in KEY_BINDINGS.values():
-        categories[item["key_category"]].append((item["help_text"], item["keys"]))
-    return categories
+def main() -> None:
+    generate_hotkeys_file()
 
 
 def generate_hotkeys_file() -> None:
@@ -45,6 +39,16 @@ def generate_hotkeys_file() -> None:
     print(f"Hot Keys list saved in {OUTPUT_FILE}")
 
 
+def read_help_categories() -> Dict[str, List[Tuple[str, List[str]]]]:
+    """
+    Get all help categories from keys.py
+    """
+    categories = defaultdict(list)
+    for item in KEY_BINDINGS.values():
+        categories[item["key_category"]].append((item["help_text"], item["keys"]))
+    return categories
+
+
 def various_key_combination(key_combinations_list: List[str]) -> str:
     """
     Returns list of key combinations.
@@ -56,10 +60,6 @@ def various_key_combination(key_combinations_list: List[str]) -> str:
         ]
     )
     return various_key_combinations
-
-
-def main() -> None:
-    generate_hotkeys_file()
 
 
 if __name__ == "__main__":
