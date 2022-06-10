@@ -41,6 +41,12 @@ def lint_hotkeys_file() -> None:
                 )
                 # Check description style
                 if not re.match(help_text_style, help_text):
+                    various_key_combinations = various_key_combinations.replace(
+                        "<kbd>", ""
+                    )
+                    various_key_combinations = various_key_combinations.replace(
+                        "</kbd>", ""
+                    )
                     print(
                         f"Description - ({help_text}) for key combination - [{various_key_combinations}] should contain only alphabets, spaces and special characters except ."
                     )
