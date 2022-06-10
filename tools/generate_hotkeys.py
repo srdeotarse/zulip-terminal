@@ -18,25 +18,30 @@ def generate_hotkeys_file() -> None:
     """
     Generate hotkeys.md in docs folder based on help text description and shortcut key combinations in config/keys.py file
     """
-    categories = read_help_categories()
+    hotkeys_file_string = get_hotkeys_file_string()
+    compare_hotkeys_file(hotkeys_file_string)
     with open(OUTPUT_FILE, "w") as mdFile:
-        mdFile.write(
-            f"<!--- Generated automatically by tools/{SCRIPT_NAME} -->\n"
-            "<!--- Do not modify -->\n\n# Hot Keys\n"
+        mdFile.write(hotkeys_file_string)
+        print(f"Hot Keys list saved in {OUTPUT_FILE}")
+
+
+def get_hotkeys_file_string() -> str:
+    """
+    Get existing hotkeys.md in docs folder as string based on help text description and shortcut key combinations in config/keys.py file
+    """
+    categories = read_help_categories()
+    hotkeys_file_string = f"<!--- Generated automatically by tools/{SCRIPT_NAME} -->\n<!--- Do not modify -->\n\n# Hot Keys\n"
+    for action in HELP_CATEGORIES.keys():
+        hotkeys_file_string += (
+            f"## {HELP_CATEGORIES[action]}\n"
+            "|Command|Key Combination|\n"
+            "| :--- | :---: |\n"
         )
-        for action in HELP_CATEGORIES.keys():
-            mdFile.write(
-                f"## {HELP_CATEGORIES[action]}\n"
-                "|Command|Key Combination|\n"
-                "| :--- | :---: |\n"
-            )
-            for help_text, key_combinations_list in categories[action]:
-                various_key_combinations = various_key_combination(
-                    key_combinations_list
-                )
-                mdFile.write(f"|{help_text}|{various_key_combinations}|\n")
-            mdFile.write("\n")
-    print(f"Hot Keys list saved in {OUTPUT_FILE}")
+        for help_text, key_combinations_list in categories[action]:
+            various_key_combinations = various_key_combination(key_combinations_list)
+            hotkeys_file_string += f"|{help_text}|{various_key_combinations}|\n"
+        hotkeys_file_string += "\n"
+    return hotkeys_file_string
 
 
 def read_help_categories() -> Dict[str, List[Tuple[str, List[str]]]]:
@@ -60,6 +65,15 @@ def various_key_combination(key_combinations_list: List[str]) -> str:
         ]
     )
     return various_key_combinations
+
+
+def compare_hotkeys_file(hotkeys_file_string: str) -> bool:
+    if hotkeys_file_string == open(OUTPUT_FILE).read():
+        print("Hot Keys already in sync with config/keys.py")
+        return True
+    else:
+        print("Hot Keys not in sync with config/keys.py")
+        return False
 
 
 if __name__ == "__main__":
