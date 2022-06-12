@@ -6,6 +6,10 @@ from typing import Dict, List, Tuple
 from zulipterminal.config.keys import HELP_CATEGORIES, KEY_BINDINGS
 
 
+OUTPUT_FILE = Path(__file__).resolve().parent.parent / "docs" / "hotkeys.md"
+SCRIPT_NAME = PurePath(__file__).name
+
+
 def read_help_categories() -> Dict[str, List[Tuple[str, List[str]]]]:
     """
     Get all help categories from keys.py
@@ -14,10 +18,6 @@ def read_help_categories() -> Dict[str, List[Tuple[str, List[str]]]]:
     for item in KEY_BINDINGS.values():
         categories[item["key_category"]].append((item["help_text"], item["keys"]))
     return categories
-
-
-OUTPUT_FILE = Path(__file__).resolve().parent.parent / "docs" / "hotkeys.md"
-SCRIPT_NAME = PurePath(__file__).name
 
 
 def generate_hotkeys_file() -> None:
@@ -37,18 +37,25 @@ def generate_hotkeys_file() -> None:
                 "| :--- | :---: |\n"
             )
             for help_text, key_combinations_list in categories[action]:
-                various_key_combinations = " / ".join(
-                    [
-                        " + ".join(
-                            [f"<kbd>{key}</kbd>" for key in key_combination.split()]
-                        )
-                        for key_combination in key_combinations_list
-                    ]
+                various_key_combinations = various_key_combination(
+                    key_combinations_list
                 )
                 mdFile.write(f"|{help_text}|{various_key_combinations}|\n")
             mdFile.write("\n")
-
     print(f"Hot Keys list saved in {OUTPUT_FILE}")
+
+
+def various_key_combination(key_combinations_list: List[str]) -> str:
+    """
+    Returns list of key combinations.
+    """
+    various_key_combinations = " / ".join(
+        [
+            " + ".join([f"<kbd>{key}</kbd>" for key in key_combination.split()])
+            for key_combination in key_combinations_list
+        ]
+    )
+    return various_key_combinations
 
 
 def main() -> None:
