@@ -559,6 +559,12 @@ class Model:
         display_error_if_present(response, self.controller)
         return response["result"] == "success"
 
+    def toggle_topic_resolved_status(self, stream_id: int, topic_name: str) -> bool:
+        request = {"stream_id": stream_id, "topic": topic_name}
+        response = self.client.update_stream(request)
+        display_error_if_present(response, self.controller)
+        return response["result"] == "success"
+
     def update_stream_message(
         self,
         topic: str,
