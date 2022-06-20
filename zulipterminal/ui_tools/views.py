@@ -7,7 +7,7 @@ import pytz
 import urwid
 from typing_extensions import Literal
 
-from zulipterminal.api_types import EditPropagateMode
+from zulipterminal.api_types import RESOLVED_TOPIC_PREFIX, EditPropagateMode
 from zulipterminal.config.keys import (
     HELP_CATEGORIES,
     KEY_BINDINGS,
@@ -20,6 +20,7 @@ from zulipterminal.config.symbols import (
     CHECK_MARK,
     COLUMN_TITLE_BAR_LINE,
     PINNED_STREAMS_DIVIDER,
+    STREAM_TOPIC_SEPARATOR,
 )
 from zulipterminal.config.ui_mappings import (
     BOT_TYPE_BY_ID,
@@ -1490,6 +1491,55 @@ class StreamInfoView(PopUpView):
         elif is_command_key("COPY_STREAM_EMAIL", key):
             self.controller.copy_to_clipboard(self.stream_email, "Stream email")
         return super().keypress(size, key)
+
+
+class TopicInfoView(PopUpView):
+    def __init__(self, controller: Any, stream_id: int, topic: str) -> None:
+        self.stream_id = stream_id
+        self.controller = controller
+        stream = controller.model.stream_dict[stream_id]
+        self.topic_name = topic
+        stream_name = stream["name"]
+
+        title = f"{stream_name} {STREAM_TOPIC_SEPARATOR} {self.topic_name}"
+
+        topic_info_content = [
+            ("Topic settings", []),
+        ]  # type: PopUpViewTableContent
+
+        popup_width, column_widths = self.calculate_table_widths(
+            topic_info_content, len(title)
+        )
+
+        resolve_topic_setting = urwid.CheckBox(
+            label="Topic Resolved",
+            state=self.topic_name.startswith(RESOLVED_TOPIC_PREFIX),
+            checked_symbol=CHECK_MARK,
+        )
+        urwid.connect_signal(
+            resolve_topic_setting, "change", self.toggle_resolve_status
+        )
+        popup_width = max(
+            popup_width,
+            len(resolve_topic_setting.label) + 4,
+        )
+
+        self.widgets = self.make_table_with_categories(
+            topic_info_content, column_widths
+        )
+
+        self.widgets.append(resolve_topic_setting)
+        super().__init__(controller, self.widgets, "TOPIC_DESC", popup_width, title)
+
+    def toggle_resolve_status(self, button: Any, new_state: bool) -> None:
+        if self.topic_name.startswith(RESOLVED_TOPIC_PREFIX):
+            self.controller.model.toggle_topic_resolved_status(
+                self.stream_id, self.topic_name
+            )
+        else:
+            self.controller.model.toggle_topic_resolved_status(
+                self.stream_id, RESOLVED_TOPIC_PREFIX + self.topic_name
+            )
 
 
 class StreamMembersView(PopUpView):
