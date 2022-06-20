@@ -279,6 +279,11 @@ KEY_BINDINGS: 'OrderedDict[str, KeyBinding]' = OrderedDict([
         'help_text': 'Show/hide stream information & modify settings',
         'key_category': 'stream_list',
     }),
+    ('TOPIC_DESC', {
+        'keys': ['i'],
+        'help_text': 'Show/hide topic information & modify settings',
+        'key_category': 'stream_list',
+    }),
     ('STREAM_MEMBERS', {
         'keys': ['m'],
         'help_text': 'Show/hide stream members (from stream information)',
